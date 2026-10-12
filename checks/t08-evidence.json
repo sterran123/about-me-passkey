@@ -1,0 +1,133 @@
+{
+  "steps": [
+    {
+      "name": "locked-page",
+      "request": "GET / 비로그인",
+      "response": {
+        "hasLock": true,
+        "leak": false
+      }
+    },
+    {
+      "name": "reg-challenges",
+      "request": "POST /api/register/options ×2",
+      "response": {
+        "c1": "3o7kKQ-jezql",
+        "c2": "LSSx2cC5yk1p"
+      }
+    },
+    {
+      "name": "register-민기",
+      "request": "create() + POST /api/register/verify",
+      "response": {
+        "ok": true,
+        "data": {
+          "ok": true,
+          "account": "민기",
+          "credentialId": "aWu02DZzmvM6iDKfhpyIa3BC4zd20QmWBYfh3OxU2Ao",
+          "publicKeyStored": "pAEBAycgBiFYILdKFjAzBZcZSF3dZ8j1svKYu1OD…"
+        }
+      }
+    },
+    {
+      "name": "private-own",
+      "request": "GET /api/private Bearer(민기)",
+      "response": {
+        "status": 200,
+        "items": [
+          "준비 중인 프로젝트 메모",
+          "10월 회고",
+          "지원하려는 곳 목록"
+        ]
+      }
+    },
+    {
+      "name": "private-no-token",
+      "request": "GET /api/private (헤더 없음)",
+      "response": {
+        "status": 401
+      }
+    },
+    {
+      "name": "passkeys-2",
+      "request": "GET /api/passkeys",
+      "response": [
+        {
+          "id": "6gZawVVqVli6kPbsDZQob4CjniH4cAPLG2Js2HNNR5Q",
+          "name": "보조 키",
+          "createdAt": "2026-10-12T20:37:32.162Z",
+          "counter": 1
+        },
+        {
+          "id": "aWu02DZzmvM6iDKfhpyIa3BC4zd20QmWBYfh3OxU2Ao",
+          "name": "내 폰",
+          "createdAt": "2026-10-12T20:37:32.134Z",
+          "counter": 2
+        }
+      ]
+    },
+    {
+      "name": "cross-A→B",
+      "request": "GET /api/private?account=테스트 Bearer(민기)",
+      "response": {
+        "status": 403,
+        "error": "이 자리는 테스트의 것 — 당신은 민기입니다"
+      }
+    },
+    {
+      "name": "passkey-delete",
+      "request": "DELETE /api/passkeys/6gZawVVqVl…",
+      "response": {
+        "ok": true,
+        "remaining": 1
+      }
+    },
+    {
+      "name": "login-remaining",
+      "request": "login() remaining credential",
+      "response": {
+        "ok": true
+      }
+    },
+    {
+      "name": "login-deleted",
+      "request": "login() no matching credential on any authenticator",
+      "response": {
+        "ok": false,
+        "cancelled": true,
+        "error": "취소했습니다"
+      }
+    },
+    {
+      "name": "cross-B→A",
+      "request": "GET /api/private?account=민기 Bearer(테스트2)",
+      "response": {
+        "status": 403,
+        "error": "이 자리는 민기의 것 — 당신은 테스트2입니다"
+      }
+    },
+    {
+      "name": "counts",
+      "request": "GET /api/private (테스트2 자기 자리)",
+      "response": {
+        "count": 3
+      }
+    },
+    {
+      "name": "logout-reuse",
+      "request": "GET /api/private Bearer(로그아웃된 토큰)",
+      "response": {
+        "status": 401
+      }
+    },
+    {
+      "name": "challenge-replay",
+      "request": "POST /api/login/verify 같은 질문 ×2",
+      "response": {
+        "first": 403,
+        "second": 401,
+        "msg": "만료되었거나 이미 쓴 로그인 질문입니다 — 다시 시도하세요"
+      }
+    }
+  ]
+}
