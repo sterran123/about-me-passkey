@@ -1107,3 +1107,74 @@ html.reduce-motion .reveal { opacity: 1; transform: none; }
 @media (max-width: 380px) {
   .hero-cta .btn { width: 100%; }
 }
+
+/* ===== 패스키 잠금 (과제 8) ===== */
+html.locked { overflow: hidden; }
+html.locked .site-header, html.locked main, html.locked footer { display: none; }
+html.locked body { min-height: 100vh; }
+
+.lock-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  display: grid; place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(700px 500px at 20% 10%, rgba(106,76,255,.16), transparent 65%),
+    radial-gradient(600px 480px at 85% 85%, rgba(255,139,107,.14), transparent 65%),
+    var(--bg);
+  transition: opacity .45s ease, visibility .45s;
+}
+.lock-overlay.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.lock-card {
+  width: min(460px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 44px 34px 30px;
+  text-align: center;
+}
+.lock-icon { font-size: 3rem; margin-bottom: 14px; }
+.lock-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
+.lock-sub { font-size: .93rem; line-height: 1.75; color: var(--ink-2); margin-bottom: 24px; }
+.lock-btn {
+  width: 100%; padding: 14px 18px;
+  font: inherit; font-weight: 800; font-size: 1rem;
+  color: #fff; background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+  border: 0; border-radius: 14px; cursor: pointer;
+  box-shadow: 0 8px 20px rgba(106,76,255,.30);
+  transition: transform .15s ease, filter .15s ease, opacity .15s;
+}
+.lock-btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.05); }
+.lock-btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.lock-btn.ghost {
+  background: var(--lavender); color: var(--violet-deep);
+  box-shadow: none; font-size: .88rem; padding: 11px 14px;
+}
+.lock-status { min-height: 1.4em; margin-top: 14px; font-size: .85rem; color: var(--ink-2); }
+.lock-foot { margin-top: 18px; font-size: .8rem; color: var(--ink-2); }
+.lock-foot a { color: var(--violet); }
+
+/* ----- 등록 페이지 ----- */
+.setup-body { background: var(--bg); }
+.setup-wrap { min-height: 100vh; display: grid; place-items: center; padding: 32px 20px; }
+.setup-card { width: min(560px, 100%); }
+.setup-steps {
+  text-align: left; font-size: .88rem; line-height: 1.8; color: var(--ink-2);
+  margin: 0 0 24px 20px; display: grid; gap: 8px;
+}
+.setup-steps code, .lock-sub code {
+  background: var(--lavender); color: var(--violet-deep);
+  border-radius: 6px; padding: 1px 7px; font-size: .82em;
+}
+.setup-result { margin-top: 20px; text-align: left; }
+.setup-result-label { font-size: .8rem; font-weight: 700; color: var(--ink-2); margin-bottom: 8px; }
+.setup-cred {
+  font: 600 .75rem/1.7 ui-monospace, Consolas, monospace;
+  background: #2B2438; color: #EDE8F8;
+  border-radius: 12px; padding: 14px 16px;
+  white-space: pre-wrap; word-break: break-all;
+  max-height: 140px; overflow: auto;
+}
+.setup-acts { display: flex; gap: 10px; margin-top: 12px; }
+.setup-acts .lock-btn { width: auto; flex: 1; }

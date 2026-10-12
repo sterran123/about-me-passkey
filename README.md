@@ -1,16 +1,22 @@
-# 김민기 — 나를 소개하는 한 페이지
+# 김민기 — 나를 소개하는 한 페이지 + 패스키 잠금
 
-나를 처음 만나는 누구에게나 — 함께 일할 사람이든, 채용 담당자든, 친구든 — 김민기가 어떤 사람인지 한 화면에서 보여주기 위해 만든 공개 소개 페이지입니다.
+과제1의 소개 페이지에 **패스키(WebAuthn) 잠금**을 얹은 두 번째 버전입니다.
+비밀번호 없이, 소유자의 인증기(폰·생체·보안키)만 통과하는 "나만 들어가기" 페이지입니다.
 
 ## 파일 구성
 
-- `index.html` — 페이지 구조와 문구 (이 안에서 내용을 바꿉니다)
-- `styles.css` — 디자인과 반응형
+- `index.html` — 페이지 구조와 문구
+- `styles.css` — 디자인·반응형 + 잠금 화면 스타일
 - `script.js` — 아코디언·인사 바꾸기·움직임 줄이기
+- `passkey.js` — WebAuthn 등록·서명 검증(공통 라이브러리)
+- `passkey-config.js` — 등록된 소유자 패스키의 **공개키** 목록 (비밀 아님)
+- `lock.js` — 잠금 화면 오버레이·해제 로직
+- `setup.html` / `setup.js` — 소유자용 패스키 등록 도구
+- `docs/AUTH.md` — 패스키를 어떻게 붙였는지, 무엇을 지키고 무엇을 못 지키는지
 - `assets/favicon.svg` — 파비콘
 - `tools/serve.mjs` — 로컬 확인용 서버
 - `tools/check-contrast.mjs` — 명암 대비 검사 스크립트
-- `checks/` — 두 기준 해상도 등 검사 스크린샷
+- `checks/` — 잠금·등록·해제·거절 검증 스크린샷
 
 ## 로컬에서 보기
 
@@ -19,39 +25,25 @@ node tools/serve.mjs
 ```
 
 → http://localhost:8080 접속 (Node.js만 있으면 됩니다)
+※ 패스키는 `localhost` 또는 `https`에서만 동작합니다 (브라우저 규칙).
 
-명암 대비 재검사:
+## 패스키가 동작하는 방식 (요약)
 
-```
-node tools/check-contrast.mjs
-```
+1. `setup.html`에서 소유자가 `navigator.credentials.create()`로 패스키를 만듭니다 — 폰 QR 스캔이나 기기 생체 인증.
+2. 만들어진 자격증명의 **공개키**를 `passkey-config.js`에 박아 둡니다 (공개키는 비밀이 아니라 안전).
+3. 방문자가 index에 오면 잠금 화면이 뜨고, "패스키로 들어가기"를 누르면 `navigator.credentials.get()`이 인증기에 서명을 시킵니다.
+4. 받은 서명을 WebCrypto로 직접 검증합니다 — 사이트 해시(rpId)·챌린지·사용자 검증 플래그·서명 카운터까지 확인.
+5. 통과하면 잠금이 풀리고 페이지가 열립니다 — 개인키는 인증기를 절대 떠나지 않습니다.
 
-## 배포하기
+## 배포
 
-### 방법 A — GitHub Pages (소스 저장소와 함께 해결, 권장)
-
-1. https://github.com 에서 무료 계정 만들기
-2. 새 Public 저장소 만들기 (이름 예: `about-me`)
-3. 이 폴더의 파일을 저장소에 업로드 (또는 git push)
-4. 저장소 Settings → Pages → Branch: `main`, `/ (root)` 선택 → Save
-5. 몇 분 뒤 `https://본인아이디.github.io/about-me/` 가 결과물 URL
-6. 소스 저장소 URL은 `https://github.com/아이디/about-me/commit/커밋해시` 형태로 커밋 화면에서 복사
-7. **`index.html` 안의 `https://github.com/kimmingi-dev/about-me` 두 곳을 실제 저장소 주소로 교체** (TODO 주석 위치)
-
-### 방법 B — Firebase Hosting (이미 쓰던 도구)
-
-```
-npm i -g firebase-tools
-firebase login
-firebase init hosting   → public 폴더를 "." 로, SPA 아님(No)
-firebase deploy
-```
-
-→ `https://프로젝트명.web.app` 가 결과물 URL
-(단, 소스 저장소 URL은 GitHub 등에 별도로 만들어야 합니다)
+- GitHub Pages (repo: `about-me-passkey` → `https://sterran123.github.io/about-me-passkey/`)
+- HTTPS가 자동 적용되므로 패스키가 바로 동작합니다.
+- rpId는 `sterran123.github.io` — 같은 도메인 안에서는 같은 자격증명이 인식됩니다.
 
 ## 배포 전 마지막 점검
 
-- [ ] `index.html`의 GitHub 저장소 링크 2곳을 실제 주소로 교체했는가
-- [ ] 강점 카드의 상황·행동·결과 문장이 실제 내 경험과 맞는가
-- [ ] 새 시크릿 창에서 로그인 없이 열리는가
+- [ ] `setup.html`에서 실제 소유자 패스키를 만들어 `passkey-config.js`에 박았는가
+- [ ] 시크릿 창에서 잠금 화면이 뜨고 본문이 안 보이는가
+- [ ] 소유자 패스키로 통과되는가 / 다른 기기·계정 패스키로는 거절되는가
+- [ ] F12 콘솔에 빨간 오류가 없는가
