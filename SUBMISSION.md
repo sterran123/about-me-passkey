@@ -7,8 +7,8 @@
 
 ## 소스 저장소 URL (필수)
 
-`https://github.com/sterran123/about-me-passkey/commit/<최신-커밋-해시>`
-— 등록·로그인·로그아웃·비공개 자료 조회가 지나는 자리: `server/server.ts`(API 라우트)와 `pk-client.js`·`private.js`(브라우저 흐름).
+`https://github.com/sterran123/about-me-passkey`
+— 등록·로그인·로그아웃·비공개 자료 조회가 지나는 자리: `server/server.ts`(API 라우트)와 `pk-client.js`·`private.js`(브라우저 흐름). 백엔드는 Deno Deploy의 `https://pds-passkey.sterran123.deno.net`에서 상시 동작합니다.
 
 ## 재현·통과 확인 4가지
 
