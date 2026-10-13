@@ -1,5 +1,11 @@
 {
+  "unstable": ["kv"],
   "tasks": {
     "start": "deno run --allow-net --allow-env --allow-read --allow-write server.ts"
+  },
+  "deploy": {
+    "org": "sterran123",
+    "app": "pds-passkey"
   }
 }
+

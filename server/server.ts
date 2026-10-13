@@ -12,12 +12,10 @@ import {
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
 } from 'npm:@simplewebauthn/server@13.1.1';
-import type {
-  PublicKeyCredentialCreationOptionsJSON,
-  PublicKeyCredentialRequestOptionsJSON,
-  RegistrationResponseJSON,
-  AuthenticationResponseJSON,
-} from 'npm:@simplewebauthn/types@13.1.0';
+
+// 등록/인증 응답 — 라이브러리가 내부에서 검증하므로 여기선 구조를 느슨하게 둠
+type RegistrationResponseJSON = any;
+type AuthenticationResponseJSON = any;
 
 // 로컬: KV_PATH 환경변수로 파일 지정 (기본은 Deno 관리 위치) / Deploy: 인자 없으면 관리형 KV
 const kv = await Deno.openKv(Deno.env.get('KV_PATH') || undefined);
@@ -123,7 +121,7 @@ Deno.serve(async (req) => {
   const allowed = isAllowed(origin) ? origin : '';
 
   // CORS — 허용된 출처만 브라우저에서 호출 가능
-  const cors = allowed
+  const cors: Record<string, string> = allowed
     ? {
         'Access-Control-Allow-Origin': allowed,
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
